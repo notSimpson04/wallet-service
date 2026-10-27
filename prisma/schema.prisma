@@ -1,0 +1,140 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  BLACKLISTED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum WalletStatus {
+  ACTIVE
+  FROZEN
+  CLOSED
+}
+
+enum TransferStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum LedgerType {
+  DEBIT
+  CREDIT
+}
+
+enum LedgerStatus {
+  POSTED
+  REVERSED
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   // (Or 'password' depending on your existing setup)
+  firstName    String?
+  lastName     String?
+  isBlocked    Boolean  @default(false)
+  role         String   @default("USER") // 'USER' or 'ADMIN'
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  wallets      Wallet[]
+  blacklistRecords     BlacklistRecord[]   
+  administrativeLogs   AdministrativeLog[]
+
+  @@map("users")
+}
+
+model Wallet {
+  id        String       @id @default(uuid())
+  userId    String
+  currency  String       @default("USD")
+  balance   BigInt       @default(0)
+  status    WalletStatus @default(ACTIVE)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user           User          @relation(fields: [userId], references: [id], onDelete: Restrict)
+  ledgerEntries  LedgerEntry[]
+
+  @@unique([userId, currency])
+  @@index([userId])
+  @@map("wallets")
+}
+
+model Transfer {
+  id                   String         @id @default(uuid())
+  sourceWalletId       String
+  destinationWalletId  String
+  amount               BigInt
+  currency             String
+  idempotencyKey       String         @unique
+  status               TransferStatus @default(PENDING)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  ledgerEntries        LedgerEntry[]
+
+  @@index([idempotencyKey])
+  @@index([sourceWalletId])
+  @@index([destinationWalletId])
+  @@map("transfers")
+}
+
+model LedgerEntry {
+  id         String       @id @default(uuid())
+  transferId String
+  walletId   String
+  type       LedgerType
+  amount     BigInt
+  status     LedgerStatus @default(POSTED)
+  createdAt  DateTime     @default(now())
+
+  transfer   Transfer     @relation(fields: [transferId], references: [id], onDelete: Restrict)
+  wallet     Wallet       @relation(fields: [walletId], references: [id], onDelete: Restrict)
+
+  @@index([walletId])
+  @@index([transferId])
+  @@map("ledger_entries")
+}
+
+model BlacklistRecord {
+  id        String   @id @default(uuid())
+  userId    String
+  reason    String
+  actorId   String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("blacklist_records")
+}
+
+model AdministrativeLog {
+  id           String   @id @default(uuid())
+  adminUserId  String
+  targetUserId String?
+  action       String
+  reason       String
+  createdAt    DateTime @default(now())
+
+  adminUser    User     @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
+
+  @@index([adminUserId])
+  @@index([targetUserId])
+  @@map("administrative_logs")
+}
