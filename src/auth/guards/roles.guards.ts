@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { Role } from '@prisma/client';
 import { ROLES_KEY } from '../decorators/roles.decorators';
 
-@Injectable admonition
+@Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
