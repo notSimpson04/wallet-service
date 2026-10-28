@@ -10,8 +10,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   
-  // Call app.listen ONLY ONCE here:
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`Application is running on port ${port}`);
 }
 void bootstrap();
