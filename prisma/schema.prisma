@@ -40,14 +40,19 @@ enum LedgerStatus {
   REVERSED
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
-  passwordHash String   // (Or 'password' depending on your existing setup)
+  passwordHash String   
   firstName    String?
   lastName     String?
   isBlocked    Boolean  @default(false)
-  role         String   @default("USER") // 'USER' or 'ADMIN'
+  role         Role   @default(USER) 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

@@ -1,7 +1,13 @@
 import { Controller, Get, Post, Delete, Body, Param, Query } from '@nestjs/common';
 import { BlacklistService } from './blacklist.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guards';
+import { Roles } from '../auth/decorators/roles.decorators';
+import { Role } from '@prisma/client';
 
 @Controller('admin/blacklist')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
 export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) {}
 
