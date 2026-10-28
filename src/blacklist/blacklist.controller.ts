@@ -3,11 +3,11 @@ import { BlacklistService } from './blacklist.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guards';
 import { Roles } from '../auth/decorators/roles.decorators';
-import { Role } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 @Controller('admin/blacklist')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
+@Roles(UserRole.ADMIN)
 export class BlacklistController {
   constructor(private readonly blacklistService: BlacklistService) {}
 

@@ -13,10 +13,7 @@ enum UserStatus {
   BLACKLISTED
 }
 
-enum UserRole {
-  USER
-  ADMIN
-}
+
 
 enum WalletStatus {
   ACTIVE
@@ -45,6 +42,11 @@ enum Role {
   ADMIN
 }
 
+enum UserRole {
+  USER
+  ADMIN
+}
+
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
@@ -52,7 +54,7 @@ model User {
   firstName    String?
   lastName     String?
   isBlocked    Boolean  @default(false)
-  role         Role   @default(USER) 
+  role         UserRole   @default(USER) 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
