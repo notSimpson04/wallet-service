@@ -10,6 +10,25 @@ A production-grade, secure, and concurrent Peer-to-Peer (P2P) financial wallet m
 
 ---
 
+## API Endpoints Summary
+
+| Endpoint | Method | Description | Access / Guards |
+| :--- | :--- | :--- | :--- |
+| `/health` | `GET` | Service health check | Public |
+| `/auth/register` | `POST` | Register a new user account and associated wallet | Public |
+| `/auth/login` | `POST` | Authenticate user credentials, check blacklist status, and issue JWT | Public |
+| `/wallets` | `GET` | Retrieve wallet balance and transaction history for authenticated user | Protected (JWT) |
+| `/wallets/deposit` | `POST` | Credit funds to the authenticated user's wallet | Protected (JWT) |
+| `/wallets/transfer` | `POST` | Execute P2P fund transfer (Wallet A to Wallet B) with row-level concurrency locking (`FOR UPDATE`) | Protected (JWT) |
+| `/admin/blacklist` | `POST` | Add a user or actor to the security blacklist | Admin / Protected |
+| `/admin/blacklist` | `GET` | List all blacklisted entities | Admin / Protected |
+| `/admin/blacklist/:id` | `DELETE` | Remove an entity from the blacklist | Admin / Protected |
+| `/users/:id/block` | `PATCH` | Block or restrict a user account | Admin / Protected |
+| `/users/:id/unblock` | `PATCH` | Restore/unblock a restricted user account | Admin / Protected |
+
+
+---
+
 ##  Tech Stack & Architecture
 * Framework: NestJS (Modular architecture, Dependency Injection, Guard-based RBAC)
 * Language: TypeScript
@@ -33,15 +52,3 @@ A production-grade, secure, and concurrent Peer-to-Peer (P2P) financial wallet m
 * Blacklist Checks: Middleware/Guards cross-reference user identifiers against an administrative blacklist table prior to permitting login, deposits, or P2P transfers. Blocked or blacklisted accounts are immediately rejected with appropriate HTTP status codes.
 
 ---
-
-## Local Development Setup
-
-### Prerequisites
-* Node.js (v18+ recommended)
-* PostgreSQL instance (local or remote)
-
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/notSimpson04/wallet-service.git](https://github.com/notSimpson04/wallet-service.git)
-   cd wallet-service
