@@ -3,12 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from './config/env.validation';
 import { PrismaModule } from './prisma/prisma.module';
 import { HealthModule } from './health/health.module';
-import { HealthController } from './health.controller';
+//import { HealthController } from './health.controller';
 import { UsersModule } from './users/users.module';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
+//import { UsersController } from './users/users.controller';
+//import { UsersService } from './users/users.service';
 import { AuthModule } from './auth/auth.module';
-import { AuthController } from './auth.controller';
+//import { AuthController } from './auth.controller';
 import { WalletsModule } from './wallets/wallets.module';
 
 @Module({
@@ -25,8 +25,8 @@ import { WalletsModule } from './wallets/wallets.module';
     AuthModule,
     WalletsModule,
   ],
-  controllers: [HealthController, AuthController, UsersController],
+  controllers: [],
   providers: [
-    UsersService],
+    ],
 })
 export class AppModule {}
